@@ -4,10 +4,10 @@ const int pinPiezo = A0; //Pin al que está conectado el sensor
 
 //Filtro, esto ayuda a ajustar la sensibilidad del sensor
 int nivelReposo = 0;               //Se utiliza para que no inicie midiendo
-const int UMBRAL_RUIDO = 60;      //Variable para ajustar la sensibilidad, siendo mayor numero menos sensible
+const int UMBRAL_RUIDO = 53;      //Variable para ajustar la sensibilidad, siendo mayor numero menos sensible
 
 const int IMPACTOS_NECESARIOS = 10;             //Mordiscos de larva necesarios para dar llamada de atención
-const long VENTANA_TIEMPO = 30000;    //Ventana de tiempo que se activa cuando detecta una mordida si pasan 30seg y no se han completado las 10 mordidas necesarias, no lo toma como ataque
+const long VENTANA_TIEMPO = 60000;    //Ventana de tiempo que se activa cuando detecta una mordida si pasan 30seg y no se han completado las 10 mordidas necesarias, no lo toma como ataque
 const long TIEMPO_REFRACTARIO = 250;  //Pausa de 0.25s tras un golpe para no contarlo doble, ya que la placa es bastante rápida
 
 int contadorImpactos = 0; //contador de mordiscos
@@ -22,7 +22,7 @@ void setup() {
 
   Serial.println("INICIANDO CALIBRACIÓN SÍSMICA");
   
-  //auto-calibrado-leemos el silencio para calibrar
+  //auto-calibrado-leemos el silencio para calibrar y evitar leer por error electricidad estática o algo por el estilo
   long suma = 0;
   for(int i = 0; i < 500; i++) {
     suma += analogRead(pinPiezo);
@@ -30,7 +30,7 @@ void setup() {
   }
   nivelReposo = suma / 500;
   
-  Serial.print("Calibración OK. Centro de gravedad: ");
+  Serial.print("Calibración OK");
   Serial.println(nivelReposo);
   Serial.println("Comienza la lectura");
   Serial.println("==============================================");
