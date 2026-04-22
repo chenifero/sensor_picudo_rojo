@@ -1,71 +1,53 @@
---Detector IoT Sísmico: Picudo Rojo (Red Palm Weevil)--
-Un dispositivo IoT de bajo coste y código abierto diseñado para la detección temprana de la larva de Picudo Rojo (Rhynchophorus ferrugineus) en palmeras. Utiliza sensores de contacto sísmico para alertar sobre patrones de masticación de larvas en el interior del tronco antes de que el árbol sufra daños irreversibles.
+🌴 Picudo-IoT: Sistema de Detección Temprana Sísmica
+Este proyecto desarrolla un sensor inteligente de bajo coste para la detección precoz del Picudo Rojo (Rhynchophorus ferrugineus) en palmeras. Utiliza un sensor sísmico de contacto y procesamiento de señal en el borde (Edge Computing) para identificar patrones de masticación larval antes de que el daño sea visible.
 
---El Problema--
-El Picudo Rojo es una plaga letal y silenciosa. Las hembras depositan sus huevos en el interior de la palmera y las larvas devoran el estípite (tronco) desde dentro. Cuando los síntomas visuales (hojas caídas, corona marchita) aparecen, la palmera suele ser irrecuperable. La única forma de salvar el árbol es detectar el sonido de las larvas alimentándose en las primeras semanas de infestación.
+🚀 Características Principales
+Detección Sísmica: Filtro de vibraciones de alta sensibilidad mediante disco piezoeléctrico de latón.
 
---Base Científica--
-El algoritmo y el diseño físico de este proyecto no son experimentales; están respaldados por literatura científica de primer nivel en agronomía:
+Algoritmo de Confirmación: Sistema basado en ráfagas de impulsos dentro de ventanas de tiempo para eliminar falsos positivos.
 
-Huella Acústica (IVIA, 2008): El patrón de masticación de las larvas tiene una firma clara en el rango de los 2210 Hz - 2290 Hz. En la fase de pupa, asciende a 2400 Hz - 2600 Hz. Otros insectos (hormigas, arañas) operan por encima de los 5500 Hz, lo que evita falsos positivos.
+Conectividad BLE: Transmisión de alertas y estado de batería vía Bluetooth Low Energy.
 
-Acople Físico: El aire es un mal conductor. Para captar las ondas sísmicas sin pérdida de energía y minimizando el daño al árbol, la literatura recomienda insertar una sonda o tornillo de acero de entre 6 cm y 12 cm de profundidad en el tronco.
+Web-App Dashboard: Interfaz de monitoreo en tiempo real accesible desde el navegador (Chrome/Edge) sin necesidad de instalación.
 
-Gestión Sísmica y Filtro de Falsas Alarmas (Mendel et al., 2023): Los dispositivos comerciales más avanzados utilizan sensores sísmicos y algoritmos que cuentan "ráfagas de impulsos" en ventanas de tiempo específicas, ahorrando batería y descartando ruidos ambientales aislados.
+Eficiencia Energética: Monitoreo inteligente del voltaje de batería Li-ion 18650.
 
---Hardware Necesario--
-Microcontrolador: Seeed Studio XIAO nRF52840 Sense (Elegido por su procesador rápido y chip BLE integrado).
+🔬 Base Científica y Teórica
+El diseño del dispositivo se fundamenta en estudios empíricos del IVIA (Instituto Valenciano de Investigaciones Agrarias) y publicaciones recientes sobre manejo sísmico de plagas:
 
-Sensor Sísmico: Disco Piezoeléctrico de latón (conectado al pin A0).
+Firma Acústica: La actividad de alimentación de las larvas se concentra en el rango de 2.210 Hz a 2.290 Hz. En estados avanzados (fase pupa), el sonido asciende al rango de 2.400 Hz - 2.600 Hz.
 
-Antena Acústica: Un tirafondo/tornillo de acero galvanizado o inoxidable de 8-10 cm.
+Selectividad: El sistema diferencia al Picudo de otros artrópodos (hormigas, arañas, cochinillas) que operan en frecuencias superiores a los 5.500 Hz.
 
-Alimentación: Batería Li-ion 18650 (3.7V nominales).
+Acoplamiento Sísmico: Se recomienda el uso de un tornillo de acero de entre 6 cm y 12 cm insertado en el tronco para captar vibraciones internas con un radio de detección de hasta 130 cm a lo largo del estípite.
 
---Arquitectura del Software--
-El código ha evolucionado de pesadas Transformadas de Fourier (FFT) a un Filtro de Impactos Sísmicos ultrarrápido y de bajo consumo:
+🛠️ Hardware Necesario
+Microcontrolador: Seeed Studio XIAO nRF52840 Sense.
 
-Auto-Calibrado (DC Offset): Al encenderse, la placa lee el nivel eléctrico de reposo durante 1 segundo para establecer su "centro de gravedad".
+Sensor: Disco piezoeléctrico de latón (conectado a pin A0).
 
-Medición de Amplitud: Lee los picos de vibración crudos saltándose matemáticas complejas para ganar velocidad de muestreo.
+Batería: Celda Li-ion 18650 (con soporte para lectura de voltaje mediante VBAT_ENABLE).
 
-Filtro Anti-Rebote: Aplica un "tiempo refractario" (ej. 250 ms) tras cada impacto para garantizar que un solo crujido largo no se cuente como múltiples mordiscos.
+Sonda: Tornillo de acero galvanizado (8-10 cm).
 
-Ventana de Confirmación: Requiere registrar un número mínimo de impactos (ej. 3 crujidos) en una ventana de tiempo estricta (ej. 10 segundos). Si se cumple, dispara la alarma BLE; si no, resetea el contador asumiendo ruido ambiental.
+💻 Algoritmo de Software
+El código implementa una lógica de procesamiento rápida para capturar eventos de lectura positiva (PRE):
 
+Calibración Inicial: Cálculo del "DC Offset" (nivel de reposo) durante 1 segundo para aislar el ruido eléctrico de la lectura sísmica.
 
---Instalación y Pruebas--
-Si quieres probar el código en tu mesa sin taladrar una palmera:
+Filtro Anti-Rebote: Tiempo refractario de 250ms tras cada impacto detectado para evitar el conteo múltiple de una misma vibración.
 
-Carga el código actual en la placa XIAO usando Arduino IDE.
+Confirmación por Eventos: Requiere un número mínimo de impactos (ej. 10) dentro de una ventana de tiempo (ej. 60 seg) para activar la alarma real.
 
-Abre el Monitor Serie a 115200 baudios.
+📱 Visualización (Web Bluetooth)
+La aplicación web permite conectar con el dispositivo de forma inalámbrica:
 
-Espera 1 segundo en absoluto silencio para el auto-calibrado.
+Muestra el porcentaje de batería real.
 
-Apoya el piezoeléctrico en la mesa.
+Contador de impactos detectados en la ventana activa.
 
-Apoya un espagueti seco en la mesa y rómpelo cerca del sensor. El monitor registrará un IMPACTO SÍSMICO.
+Alerta visual de "Larva Detectada" en caso de confirmación de patrón.
 
-Rompe 3 espaguetis en menos de 10 segundos para ver saltar la ALERTA CONFIRMADA.
+ODS 12 (Producción Responsable): Permite tratamientos curativos focalizados, reduciendo el uso masivo de insecticidas químicos preventivos.
 
-Despliegue en Campo
-Para probar en un entorno real:
-
-Clava el tornillo de acero en un tocón o palmera sana.
-
-Adhiere firmemente la chapa de latón del piezoeléctrico a la cabeza plana del tornillo (Usando superglue).
-
-Introduce materia seca (palillos, nueces, fideos crudos) en un hueco cercano del tocón y tritúralos con un destornillador para simular la masticación de la larva.
-
---Escalabilidad--
-[x] Ajuste de sensibilidad y ventana de tiempo en pruebas de laboratorio.
-
-[ ] Pruebas acústicas destructivas en tocón real de palmera.
-
-[ ] Fusión del algoritmo sísmico con el módulo de comunicación BLE (bluefruit.h).
-
-[ ] Optimización de energía: Implementar modo Deep Sleep y despertares periódicos (ej. cada 24 horas) para alargar la vida de la batería a meses.
-
---Licencia--
-Este proyecto es de código abierto. Siéntete libre de clonarlo, mejorarlo y usarlo para salvar palmeras en tu ciudad.
+ODS 15 (Vida de Ecosistemas Terrestres): Control de especies invasoras y protección de la flora local.
