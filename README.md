@@ -2,6 +2,8 @@
 
 # 🌴 Sensor Picudo Rojo — Detector IoT Sísmico
 
+**Segundo premio de las IV Telecogames que organiza la Univerdidad de Extremadura**
+
 **Detección temprana de la larva del Picudo Rojo (*Rhynchophorus ferrugineus*) en palmeras mediante vibraciones sísmicas.**
 
 ![C++](https://img.shields.io/badge/C++-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
